@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tp-cicd-ml
+  labels:
+    app: tp-cicd-ml
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tp-cicd-ml
+  template:
+    metadata:
+      labels:
+        app: tp-cicd-ml
+    spec:
+      containers:
+        - name: tp-cicd-ml
+          image: tp-cicd-ml:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
